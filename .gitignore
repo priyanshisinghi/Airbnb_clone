@@ -21,6 +21,10 @@ dist/
 .env.production
 .env*.local
 
+# Tool generated files
+AGENTS.md
+CLAUDE.md
+
 # IDE & OS
 .vscode/
 .idea/
