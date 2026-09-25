@@ -33,6 +33,8 @@ export default function RoomPage({ params }: RoomPageProps) {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
 
   useEffect(() => {
     if (!listingId) return;
@@ -110,22 +112,6 @@ export default function RoomPage({ params }: RoomPageProps) {
     }).format(val);
   };
 
-  // Calculate pricing breakdown for sticky widget
-  const calculateNights = () => {
-    if (!checkIn || !checkOut) return 1;
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-    const diffTime = end.getTime() - start.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 1;
-  };
-
-  const nights = calculateNights();
-  const nightlyTotal = (listing?.price_per_night || 0) * nights;
-  const cleaningFee = listing?.cleaning_fee || 0;
-  const serviceFee = Math.round(nightlyTotal * 0.12);
-  const totalAmount = nightlyTotal + cleaningFee + serviceFee;
-
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -176,10 +162,16 @@ export default function RoomPage({ params }: RoomPageProps) {
 
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
         {/* Header Title Section */}
-        <div className="mb-4">
+        <div className="mb-3">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-2">
             {listing.title}
           </h1>
+
+          {listing.rating !== null && listing.rating !== undefined && listing.rating >= 4.8 && listing.reviews_count >= 3 && (
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[var(--accent-soft)] px-3 py-1.5 text-xs font-bold text-[var(--accent-deep)]">
+              <span aria-hidden="true">★</span> Guest favourite
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-semibold text-gray-900">
             <div className="flex items-center space-x-2">
@@ -276,12 +268,12 @@ export default function RoomPage({ params }: RoomPageProps) {
         </div>
 
         {/* Main Details Grid: Left 2/3 Content, Right 1/3 Sticky Booking Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-12 pb-28 lg:pb-0">
           {/* Left Column Content */}
-          <div className="lg:col-span-2 space-y-8 divide-y divide-gray-200">
+          <div className="lg:col-span-2 divide-y divide-gray-200">
             {/* Overview & Host Info */}
-            <div>
-              <div className="flex justify-between items-center pb-6">
+            <div className="pb-6 md:pb-8">
+              <div className="flex items-center justify-between gap-3 pb-4 md:pb-6">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">
                     {listing.property_type} hosted by {listing.host.name}
@@ -300,9 +292,9 @@ export default function RoomPage({ params }: RoomPageProps) {
               </div>
 
               {/* Highlights */}
-              <div className="space-y-4 pt-4">
+              <div className="space-y-3 pt-2 md:space-y-4 md:pt-4">
                 {listing.host.is_superhost && (
-                  <div className="flex space-x-4 items-start">
+                    <div className="flex items-start gap-3 md:gap-4">
                     <svg className="w-6 h-6 text-gray-800 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                     </svg>
@@ -312,7 +304,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                     </div>
                   </div>
                 )}
-                <div className="flex space-x-4 items-start">
+                <div className="flex items-start gap-3 md:gap-4">
                   <svg className="w-6 h-6 text-gray-800 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -322,7 +314,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                     <p className="text-xs text-gray-500 mt-0.5">100% of recent guests gave the location a 5-star rating.</p>
                   </div>
                 </div>
-                <div className="flex space-x-4 items-start">
+                <div className="flex items-start gap-3 md:gap-4">
                   <svg className="w-6 h-6 text-gray-800 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -335,19 +327,24 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
 
             {/* Description */}
-            <div className="pt-8">
+            <div className="py-6 md:py-8">
               <h3 className="text-lg font-bold text-gray-900 mb-3">About this space</h3>
-              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                {listing.description}
+              <p className="text-sm leading-6 text-gray-700 whitespace-pre-line">
+                {descriptionExpanded || listing.description.length <= 280 ? listing.description : `${listing.description.slice(0, 280).trim()}...`}
               </p>
+              {listing.description.length > 280 && (
+                <button type="button" onClick={() => setDescriptionExpanded((expanded) => !expanded)} className="mt-3 text-sm font-bold text-gray-900 underline underline-offset-2">
+                  {descriptionExpanded ? "Show less" : "Show more"}
+                </button>
+              )}
             </div>
 
             {/* Where you'll sleep */}
-            <div className="pt-8">
+            <div className="py-6 md:py-8">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Where you'll sleep</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible">
                 {Array.from({ length: listing.bedrooms }).map((_, idx) => (
-                  <div key={idx} className="border border-gray-200 rounded-2xl p-6 bg-gray-50/50">
+                  <div key={idx} className="min-w-[210px] rounded-2xl border border-gray-200 bg-gray-50/50 p-4 md:min-w-0 md:p-6">
                     <svg className="w-6 h-6 text-gray-800 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 12V8H4v4M3 20h18M4 12v8m16-8v8" />
                     </svg>
@@ -359,10 +356,10 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
 
             {/* Amenities Section */}
-            <div className="pt-8">
+            <div className="py-6 md:py-8">
               <h3 className="text-lg font-bold text-gray-900 mb-4">What this place offers</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {listing.amenities.map((amenity) => (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
+                {(showAllAmenities ? listing.amenities : listing.amenities.slice(0, 6)).map((amenity) => (
                   <div key={amenity.id} className="flex items-center space-x-3 text-sm text-gray-800">
                     <svg className="w-5 h-5 text-gray-600 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -371,10 +368,15 @@ export default function RoomPage({ params }: RoomPageProps) {
                   </div>
                 ))}
               </div>
+              {listing.amenities.length > 6 && (
+                <button type="button" onClick={() => setShowAllAmenities((visible) => !visible)} className="mt-4 text-sm font-bold text-gray-900 underline underline-offset-2">
+                  {showAllAmenities ? "Show fewer amenities" : `Show all ${listing.amenities.length} amenities`}
+                </button>
+              )}
             </div>
 
             {/* Reviews Section */}
-            <div className="pt-8">
+            <div className="py-6 md:py-8">
               <div className="flex items-center space-x-2 mb-6">
                 <svg className="w-5 h-5 fill-current text-gray-900" viewBox="0 0 32 32">
                   <path d="M16 2l4.55 9.22 10.17 1.48-7.36 7.17 1.74 10.13L16 25.23l-9.1 4.77 1.74-10.13-7.36-7.17 10.17-1.48z" />
@@ -385,7 +387,7 @@ export default function RoomPage({ params }: RoomPageProps) {
               </div>
 
               {listing.reviews && listing.reviews.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
                   {listing.reviews.map((rev) => (
                     <div key={rev.id} className="p-4 border border-gray-100 bg-gray-50/60 rounded-2xl space-y-3">
                       <div className="flex items-center space-x-3">
@@ -414,11 +416,11 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
 
             {/* Static Map Section */}
-            <div className="pt-8">
+            <div className="py-6 md:py-8">
               <h3 className="text-lg font-bold text-gray-900 mb-2">Where you'll be</h3>
               <p className="text-sm text-gray-600 mb-4">{listing.city}, {listing.country}</p>
 
-              <div className="relative w-full h-72 rounded-3xl bg-slate-100 overflow-hidden border border-gray-200 flex flex-col items-center justify-center text-center p-6">
+              <div className="relative flex h-64 w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-gray-200 bg-slate-100 p-5 text-center md:h-72 md:p-6">
                 <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg mb-2">
                   <svg className="w-6 h-6 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -541,19 +543,21 @@ export default function RoomPage({ params }: RoomPageProps) {
       </main>
 
       {/* Mobile Sticky Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 p-4 flex items-center justify-between shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl lg:hidden">
         <div>
-          <span className="text-lg font-bold text-gray-900">{formatCurrency(listing.price_per_night)}</span>
-          <span className="text-xs text-gray-500 font-normal"> / night</span>
-          <div className="text-xs text-gray-600 underline">
-            {checkIn && checkOut ? `${checkIn} – ${checkOut}` : "Add dates"}
+          <span className="text-lg font-bold text-gray-900">{formatCurrency(quote?.total || listing.price_per_night)}</span>
+          <span className="text-xs font-normal text-gray-500">{quote ? " total" : " / night"}</span>
+          <div className="text-xs text-gray-600">
+            {quote ? `${quote.nights} ${quote.nights === 1 ? "night" : "nights"} · ${checkIn} - ${checkOut}` : "Add dates"}
           </div>
         </div>
         <button
           type="button"
-          className="bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-md cursor-pointer active:scale-95"
+          onClick={handleReserve}
+          disabled={Boolean(quoteError) || !checkIn || !checkOut || quoteLoading}
+          className="rounded-xl bg-rose-500 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          Reserve
+          {quoteLoading ? "Checking..." : "Reserve"}
         </button>
       </div>
 

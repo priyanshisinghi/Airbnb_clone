@@ -25,6 +25,13 @@ def get_my_bookings(
 ):
     return booking_service.get_user_bookings(db=db, current_user=current_user)
 
+@router.get("/host", response_model=List[BookingResponse])
+def get_host_bookings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return booking_service.get_host_bookings(db=db, current_user=current_user)
+
 @router.post("/{booking_id}/cancel", response_model=BookingResponse)
 def cancel_booking(
     booking_id: int,

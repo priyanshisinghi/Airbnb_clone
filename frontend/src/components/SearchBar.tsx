@@ -82,11 +82,13 @@ export default function SearchBar() {
             <button
               onClick={() => setExpanded(true)}
               type="button"
-              className="flex-1 flex items-center justify-between border border-gray-300 hover:shadow-md rounded-full px-5 py-2.5 bg-white transition duration-200 cursor-pointer shadow-xs"
+              className="flex-1 flex items-center justify-between border border-gray-300 hover:shadow-md rounded-full px-5 py-3 bg-white transition duration-200 cursor-pointer shadow-xs"
+              aria-label="Start your search"
             >
               <div className="flex items-center space-x-3 divide-x divide-gray-200 text-xs sm:text-sm font-semibold text-gray-800">
                 <span className="px-2 truncate">
-                  {location || "Anywhere"}
+                  <span className="sm:hidden">Start your search</span>
+                  <span className="hidden sm:inline">{location || "Anywhere"}</span>
                 </span>
                 <span className="px-3 truncate text-gray-500 font-normal hidden sm:inline">
                   {checkIn && checkOut ? `${checkIn} to ${checkOut}` : "Any week"}
@@ -107,6 +109,7 @@ export default function SearchBar() {
             <button
               type="button"
               onClick={() => setFilterModalOpen(true)}
+              aria-label="Open filters"
               className="relative flex items-center space-x-2 border border-gray-300 hover:border-gray-900 rounded-full px-4 py-2.5 bg-white text-xs font-semibold text-gray-800 transition cursor-pointer shrink-0 shadow-xs"
             >
               <svg className="w-4 h-4 text-gray-700 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
@@ -124,7 +127,9 @@ export default function SearchBar() {
           /* Expanded Form Bar */
           <form
             onSubmit={handleSearch}
-            className="w-full bg-white border border-gray-200 rounded-3xl p-3 shadow-xl flex flex-col md:flex-row items-center gap-2 transition duration-300 animate-in fade-in"
+            className="fixed inset-x-4 top-24 z-50 flex max-h-[calc(100vh-8rem)] w-auto flex-col items-center gap-2 overflow-y-auto rounded-3xl border border-gray-200 bg-white p-4 shadow-2xl transition duration-300 animate-in fade-in md:relative md:inset-auto md:z-auto md:max-h-none md:w-full md:flex-row md:overflow-visible md:rounded-3xl md:p-3"
+            role="dialog"
+            aria-label="Search homes"
           >
             {/* Where */}
             <div className="flex-1 w-full px-3 py-1.5 hover:bg-gray-100/80 rounded-2xl transition">
@@ -212,6 +217,10 @@ export default function SearchBar() {
           </form>
         )}
       </div>
+
+      {expanded && (
+        <button type="button" aria-label="Close search" onClick={() => setExpanded(false)} className="fixed inset-0 z-40 cursor-default bg-black/25 md:hidden" />
+      )}
 
       {dateError && (
         <div className="text-center text-xs font-semibold text-rose-600 mt-2">

@@ -23,6 +23,14 @@ function ExploreContent() {
   const location = searchParams.get("location") || undefined;
   const category = searchParams.get("category") || undefined;
   const guests = searchParams.get("guests") ? Number(searchParams.get("guests")) : undefined;
+  const checkIn = searchParams.get("check_in") || undefined;
+  const checkOut = searchParams.get("check_out") || undefined;
+  const minPrice = searchParams.get("min_price") ? Number(searchParams.get("min_price")) : undefined;
+  const maxPrice = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : undefined;
+  const propertyType = searchParams.get("property_type") || undefined;
+  const bedrooms = searchParams.get("bedrooms") ? Number(searchParams.get("bedrooms")) : undefined;
+  const beds = searchParams.get("beds") ? Number(searchParams.get("beds")) : undefined;
+  const amenities = searchParams.getAll("amenities");
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
 
   useEffect(() => {
@@ -39,6 +47,14 @@ function ExploreContent() {
       location,
       category,
       guests,
+      check_in: checkIn,
+      check_out: checkOut,
+      min_price: minPrice,
+      max_price: maxPrice,
+      property_type: propertyType,
+      bedrooms,
+      beds,
+      amenities,
       page,
       page_size: 15,
     })
@@ -51,7 +67,7 @@ function ExploreContent() {
       .finally(() => {
         setLoading(false);
       });
-  }, [location, category, guests, page]);
+  }, [location, category, guests, checkIn, checkOut, minPrice, maxPrice, propertyType, bedrooms, beds, amenities.join(","), page]);
 
   const handleResetFilters = () => {
     router.push("/");
@@ -63,7 +79,7 @@ function ExploreContent() {
     router.push(`/?${params.toString()}`);
   };
 
-  const isFiltering = Boolean(location || category || guests);
+  const isFiltering = Boolean(location || category || guests || checkIn || checkOut || minPrice !== undefined || maxPrice !== undefined || propertyType || bedrooms || beds || amenities.length);
   const items = listingsData?.items || [];
 
   // Group listings into featured sections when browsing home without filters

@@ -1,13 +1,23 @@
 import { ListingSummary, ListingDetail, PaginatedListings, ListingSearchParams, UnavailableDateRange, QuoteResponse, BookingResponse } from "@/types/listing";
 import { Category, Amenity } from "@/types/meta";
+import { HostListingPayload } from "@/types/hostListing";
+import { DemoUser } from "@/types/user";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
+  const headers = new Headers(options?.headers);
+
+  if (typeof window !== "undefined") {
+    const selectedUserId = window.localStorage.getItem("selectedUserId");
+    if (selectedUserId) headers.set("X-User-Id", selectedUserId);
+  }
+
   const response = await fetch(url, {
     cache: "no-store",
     ...options,
+    headers,
   });
 
   if (!response.ok) {
@@ -15,11 +25,21 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     throw new Error(errorData.detail || `HTTP Error ${response.status}: ${response.statusText}`);
   }
 
+  if (response.status === 204) return undefined as T;
+
   return response.json();
 }
 
 export async function fetchHealth(): Promise<{ status: string }> {
   return request<{ status: string }>("/api/health");
+}
+
+export async function fetchUsers(): Promise<DemoUser[]> {
+  return request<DemoUser[]>("/api/users");
+}
+
+export async function fetchCurrentUser(): Promise<DemoUser> {
+  return request<DemoUser>("/api/users/me");
 }
 
 export async function fetchListings(params?: ListingSearchParams): Promise<PaginatedListings> {
@@ -98,6 +118,10 @@ export async function fetchMyBookings(): Promise<BookingResponse[]> {
   return request<BookingResponse[]>("/api/bookings/me");
 }
 
+export async function fetchHostBookings(): Promise<BookingResponse[]> {
+  return request<BookingResponse[]>("/api/bookings/host");
+}
+
 export async function cancelBooking(bookingId: number): Promise<BookingResponse> {
   return request<BookingResponse>(`/api/bookings/${bookingId}/cancel`, {
     method: "POST",
@@ -120,4 +144,33 @@ export async function addToWishlist(listingId: number): Promise<{ saved: boolean
 
 export async function removeFromWishlist(listingId: number): Promise<{ saved: boolean; listing_id: number }> {
   return request(`/api/wishlist/${listingId}`, { method: "DELETE" });
+}
+
+// -- Host listings ----------------------------------------------------------
+
+export async function fetchHostListings(): Promise<ListingSummary[]> {
+  return request<ListingSummary[]>("/api/host/listings");
+}
+
+export async function createHostListing(payload: HostListingPayload): Promise<ListingSummary> {
+  return request<ListingSummary>("/api/host/listings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateHostListing(
+  listingId: number,
+  payload: HostListingPayload,
+): Promise<ListingSummary> {
+  return request<ListingSummary>(`/api/host/listings/${listingId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteHostListing(listingId: number): Promise<void> {
+  return request<void>(`/api/host/listings/${listingId}`, { method: "DELETE" });
 }

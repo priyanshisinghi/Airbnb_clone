@@ -107,6 +107,26 @@ def get_user_bookings(db: Session, current_user: User) -> List[Booking]:
         .all()
     )
 
+def get_host_bookings(db: Session, current_user: User) -> List[Booking]:
+    if not current_user.is_host:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only demo host users can view host reservations",
+        )
+
+    return (
+        db.query(Booking)
+        .join(Booking.listing)
+        .options(
+            joinedload(Booking.listing).joinedload(Listing.host),
+            joinedload(Booking.listing).joinedload(Listing.images),
+            joinedload(Booking.guest),
+        )
+        .filter(Listing.host_id == current_user.id)
+        .order_by(Booking.check_in.asc(), Booking.id.asc())
+        .all()
+    )
+
 def cancel_booking(db: Session, current_user: User, booking_id: int) -> Booking:
     booking = (
         db.query(Booking)

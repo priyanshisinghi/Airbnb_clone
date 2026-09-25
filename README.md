@@ -37,6 +37,10 @@ airbnb-clone/
    uvicorn app.main:app --reload --port 8000
    ```
 
+To reset the local sample data after changing seed content, stop the backend,
+delete `backend/airbnb.db`, and start the server again. The startup seed will
+recreate the schema and sample data.
+
 ### Frontend Setup
 1. Navigate to `frontend`:
    ```bash

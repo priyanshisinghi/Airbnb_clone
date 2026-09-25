@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import SessionLocal, engine, Base
 import app.models  # Register models with SQLAlchemy Base
-from app.routers import health, listings, meta, bookings, wishlist
+from app.routers import health, listings, meta, bookings, wishlist, users, host_listings
 from app.seed.seed import seed_db
 
 # Create database tables if any exist
@@ -37,6 +37,8 @@ app.include_router(listings.router, prefix=settings.API_V1_STR)
 app.include_router(meta.router, prefix=settings.API_V1_STR)
 app.include_router(bookings.router, prefix=settings.API_V1_STR)
 app.include_router(wishlist.router, prefix=settings.API_V1_STR)
+app.include_router(users.router, prefix=settings.API_V1_STR)
+app.include_router(host_listings.router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():

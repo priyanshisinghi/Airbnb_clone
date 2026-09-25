@@ -188,7 +188,8 @@ def seed_db(db: Session) -> dict:
         pool = IMAGE_POOLS[category_key]
         
         for pos in range(5):
-            img_url = pool[pos % len(pool)]
+            # Offset each listing's stable image set so neighboring homes do not share the same cover.
+            img_url = pool[(pos + listing.id - 1) % len(pool)]
             img = ListingImage(listing_id=listing.id, url=img_url, position=pos)
             db.add(img)
             

@@ -20,6 +20,7 @@ import {
   ReactNode,
 } from "react";
 import { addToWishlist, removeFromWishlist, fetchWishlistIds } from "@/lib/api";
+import { useUser } from "@/context/UserContext";
 
 /* ─── Toast types ─────────────────────────────────────────── */
 type ToastType = "saved" | "removed" | "error";
@@ -87,6 +88,7 @@ function ToastStack({ toasts }: { toasts: Toast[] }) {
 let toastCounter = 0;
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
+  const { selectedUserId } = useUser();
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -96,11 +98,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   /* hydrate */
   useEffect(() => {
+    if (selectedUserId === null) return;
+
+    setLoading(true);
     fetchWishlistIds()
       .then((ids) => setSavedIds(new Set(ids)))
-      .catch(() => {}) // silently ignore — user still gets the UI
+      .catch(() => setSavedIds(new Set()))
       .finally(() => setLoading(false));
-  }, []);
+  }, [selectedUserId]);
 
   /* toast helper */
   const showToast = useCallback((type: ToastType, message: string) => {

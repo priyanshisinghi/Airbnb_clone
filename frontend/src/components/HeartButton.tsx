@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, MouseEvent } from "react";
+import { MouseEvent } from "react";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface HeartButtonProps {
   listingId: number;
-  initialFavorited?: boolean;
 }
 
-export default function HeartButton({ listingId, initialFavorited = false }: HeartButtonProps) {
-  const [favorited, setFavorited] = useState(initialFavorited);
+export default function HeartButton({ listingId }: HeartButtonProps) {
+  const { isSaved, toggle } = useWishlist();
+  const favorited = isSaved(listingId);
 
   const toggleFavorite = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    setFavorited((prev) => !prev);
+    void toggle(listingId);
   };
 
   return (
@@ -21,7 +22,7 @@ export default function HeartButton({ listingId, initialFavorited = false }: Hea
       onClick={toggleFavorite}
       type="button"
       className="relative hover:opacity-80 transition cursor-pointer p-1.5 rounded-full text-white drop-shadow-md hover:scale-110 active:scale-95"
-      aria-label="Add to wishlist"
+      aria-label={favorited ? "Remove from wishlist" : "Add to wishlist"}
     >
       <svg
         viewBox="0 0 32 32"

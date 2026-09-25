@@ -49,6 +49,15 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
     setSelectedAmenities(searchParams.getAll("amenities"));
   }, [searchParams]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const toggleAmenity = (name: string) => {
@@ -95,8 +104,8 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in">
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in" role="presentation">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="filter-modal-title">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <button
@@ -108,7 +117,7 @@ export default function FilterModal({ isOpen, onClose }: FilterModalProps) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <h3 className="text-base font-bold text-gray-900">Filters</h3>
+          <h3 id="filter-modal-title" className="text-base font-bold text-gray-900">Filters</h3>
           <div className="w-9" />
         </div>
 

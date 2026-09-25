@@ -11,7 +11,7 @@ interface ListingCardProps {
 }
 
 export default function ListingCard({ listing, isGuestFavourite }: ListingCardProps) {
-  const isFav = isGuestFavourite || (listing.rating && listing.rating >= 4.8);
+  const isFav = isGuestFavourite || (listing.rating !== null && listing.rating !== undefined && listing.rating >= 4.8 && listing.reviews_count >= 3);
 
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
