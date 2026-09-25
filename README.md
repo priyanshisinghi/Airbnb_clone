@@ -1,6 +1,6 @@
-# Staywell — Airbnb-Inspired Full-Stack Marketplace
+# Airbnb clone — Airbnb-Inspired Full-Stack Marketplace
 
-Staywell is a full-stack Airbnb-inspired accommodation marketplace built as an SDE Fullstack Assignment.
+A full-stack Airbnb-inspired accommodation marketplace built as an SDE Fullstack Assignment.
 
 The application focuses on the core guest and host workflows of a modern accommodation marketplace: browsing properties, searching and filtering listings, checking availability, booking stays, managing trips and wishlists, and creating and managing host listings.
 

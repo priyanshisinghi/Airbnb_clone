@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Staywell | Homes for your next trip",
+  title: "Airbnb | Homes for your next trip",
   description: "Explore distinctive stays, save favourites, and book your next trip.",
 };
 
