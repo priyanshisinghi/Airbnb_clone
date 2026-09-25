@@ -1,62 +1,130 @@
-# Airbnb Clone
+# Staywell — Airbnb-Inspired Full-Stack Marketplace
 
-A full-stack Airbnb-inspired accommodation marketplace built as an SDE Fullstack Assignment.
+Staywell is a full-stack Airbnb-inspired accommodation marketplace built as an SDE Fullstack Assignment.
 
-## Live Demo
+The application focuses on the core guest and host workflows of a modern accommodation marketplace: browsing properties, searching and filtering listings, checking availability, booking stays, managing trips and wishlists, and creating and managing host listings.
 
-Frontend: Not deployed
+---
 
-Backend API: Not deployed
+## 🚀 Live Demo
 
-API Docs: Available locally at `http://localhost:8000/docs`
+- **Frontend:** https://airbnb-clone-five-vert.vercel.app
+- **Backend API:** https://airbnb-clone-5f2h.onrender.com
+- **GitHub Repository:** https://github.com/priyanshisinghi/Airbnb_clone
 
-## Screenshots
+> **Note:** The backend is hosted on Render's free tier. After a period of inactivity, the first request may take additional time while the service wakes up.
 
-Only screenshots of this application should be added here. Airbnb reference screenshots are intentionally excluded.
-
-- Home: _Add final application screenshot here._
-- Listing Detail: _Add final application screenshot here._
-- Checkout: _Add final application screenshot here._
-- Trips: _Add final application screenshot here._
-- Wishlist: _Add final application screenshot here._
-- Host Dashboard: _Add final application screenshot here._
+---
 
 ## Core Features
 
-- Listing discovery with ordered image galleries
-- URL-backed location, date, guest, price, property type, category, room, bed, and amenity filters
+### Home & Search
+
+- Property listing discovery
+- Listing cards with property images, location, price, and rating
+- Search by location
+- Date-range search
+- Guest selection
+- Price filtering
+- Property type filtering
+- Category filtering
+- Amenity filtering
+- Bedroom and bed filtering
+- URL-backed search parameters
 - Pagination
-- Listing detail pages with host information, amenities, reviews, and a basic static location map
-- Backend availability checks with exclusive checkout dates
-- Backend-authoritative quotes and price snapshots on bookings
-- Mock checkout and booking confirmation
-- My Trips with upcoming, past, and cancelled bookings
+
+### Listing Details
+
+- Ordered property image gallery
+- Property title and description
+- Location
+- Guest capacity
+- Bedrooms, beds, and bathrooms
+- Amenities
+- Host information
+- Reviews and ratings
+- Availability information
+- Date-range selection
+- Server-generated price quote
+- Basic/static location map
+
+### Booking Flow
+
+- Check-in and check-out selection
+- Guest-count validation
+- Backend availability validation
+- Overlapping booking prevention
+- Server-side price calculation
+- Cleaning and service fees
+- Mock checkout
+- Booking confirmation
+- My Trips
+- Upcoming, past, and cancelled booking states
 - Booking cancellation
-- Persistent wishlist with optimistic UI updates
-- Mock guest and host user switching
-- Host listing create, edit, list, and delete operations
-- Host ownership authorization and booking-safe deletion
-- Host dashboard metrics and reservation display
-- Responsive desktop/mobile navigation, search dialog, profile, messages placeholder, and Experiences/Services placeholders
+- Confirmed bookings block unavailable dates
+
+### Wishlist
+
+- Save listings
+- Remove saved listings
+- Wishlist page
+- Database-backed wishlist state
+- Duplicate wishlist entries prevented by the database design
+
+### Host Experience
+
+- Host dashboard
+- View owned listings
+- View reservations
+- Create listings
+- Edit owned listings
+- Delete eligible owned listings
+- Host ownership checks
+- Booking-safe deletion behavior
+
+### Partial Responsive Experience
+
+The application includes responsive layouts for desktop, tablet, and mobile experiences, including:
+
+- navigation
+- search
+- listing cards
+- listing details
+- booking controls
+- checkout
+- trips
+- wishlist
+- profile
+- host pages
+
+---
 
 ## Mocked / Placeholder Features
 
-- **Payment:** Mocked. Checkout does not process real money.
-- **Authentication:** Mock demo users selected in the UI; this is not production authentication.
-- **Messaging:** Coming Soon placeholder at `/messages`.
-- **Map:** Basic/static location presentation using stored latitude and longitude.
-- **Identity verification:** Coming Soon placeholder on the profile page.
-- **Experiences and Services:** Coming Soon placeholder pages.
+The assignment allows several systems to be mocked or represented as placeholders.
+
+The application handles them as follows:
+
+- **Authentication:** Mocked using seeded demo users.
+- **Payment:** Mocked. No real money is processed.
+- **Messaging:** Coming Soon placeholder.
+- **Map:** Basic/static location presentation.
+- **Identity Verification:** Coming Soon placeholder.
+- **Experiences:** Coming Soon / UI placeholder.
+- **Services:** Coming Soon / UI placeholder.
+
+---
 
 ## Tech Stack
 
 ### Frontend
 
-- Next.js `16.3.6` with App Router
+- Next.js `16.3.6`
 - React `19.2.8`
 - TypeScript
 - Tailwind CSS `4`
-- `next/font` for Geist typography
+- Next.js App Router
+- `next/font`
 
 ### Backend
 
@@ -72,327 +140,633 @@ Only screenshots of this application should be added here. Airbnb reference scre
 
 - SQLite
 
+### Deployment
+
+- **Frontend:** Vercel
+- **Backend:** Render
+
+---
+
 ## Architecture
 
 ```text
-Browser / Next.js
-        |
-        v
-Central API Client (frontend/src/lib/api.ts)
-        |
-        v
+Browser
+   |
+   v
+Next.js Frontend
+   |
+   v
+Central API Client
+(frontend/src/lib/api.ts)
+   |
+   | REST API
+   v
 FastAPI Routers
-        |
-        v
+   |
+   v
 Service Layer
-        |
-        v
-SQLAlchemy Models and Sessions
-        |
-        v
+   |
+   v
+SQLAlchemy
+   |
+   v
 SQLite
 ```
 
-The Next.js application owns rendering, URL state, responsive interactions, and the centralized browser API client. FastAPI routers validate and route requests. Services contain booking, pricing, listing, wishlist, and host business rules. SQLAlchemy models define persistence relationships, while the database session dependency opens and closes sessions per request.
+The application separates presentation, HTTP routing, business logic, and persistence.
+
+### Frontend
+
+Next.js handles:
+
+- routing
+- rendering
+- responsive UI
+- search state
+- mock-user state
+- API communication
+
+API requests are routed through a centralized frontend API client.
+
+### Backend
+
+FastAPI routers receive and validate HTTP requests.
+
+Business rules are separated into service modules for functionality such as:
+
+- listing search
+- availability
+- pricing
+- booking
+- wishlist
+- host operations
+
+SQLAlchemy models define database tables and relationships.
+
+---
 
 ## Project Structure
 
 ```text
-.
+Airbnb_clone/
+│
 ├── backend/
 │   ├── app/
-│   │   ├── core/           # settings, database, current-user dependency
-│   │   ├── models/         # SQLAlchemy models
-│   │   ├── routers/        # FastAPI HTTP routes
-│   │   ├── schemas/        # Pydantic request/response models
-│   │   ├── seed/           # sample data and stable image pools
-│   │   └── services/       # business logic
-│   ├── airbnb.db           # local SQLite database when created
+│   │   ├── core/          # configuration, database and dependencies
+│   │   ├── models/        # SQLAlchemy models
+│   │   ├── routers/       # FastAPI routes
+│   │   ├── schemas/       # Pydantic schemas
+│   │   ├── seed/          # sample data
+│   │   └── services/      # business logic
+│   │
 │   ├── requirements.txt
-│   ├── .env.example
-│   └── .env                # local only, ignored by Git
+│   └── .env.example
+│
 ├── frontend/
-│   ├── src/app/            # App Router pages
-│   ├── src/components/     # shared UI components
-│   ├── src/context/        # mock user and wishlist state
-│   ├── src/lib/api.ts      # centralized API client
-│   ├── src/types/          # TypeScript data types
-│   ├── public/
+│   ├── public/            # static assets
+│   ├── src/
+│   │   ├── app/           # Next.js App Router pages
+│   │   ├── components/    # reusable UI components
+│   │   ├── context/       # shared client state
+│   │   ├── lib/           # centralized API client
+│   │   └── types/         # TypeScript types
+│   │
 │   ├── package.json
 │   └── .env.local.example
-├── references/             # project reference notes, if supplied
+│
 ├── README.md
 └── .gitignore
 ```
 
+---
+
 ## Database Schema
 
-### Tables
+The application uses a relational SQLite schema.
 
-- `users`: seeded people with guest/host and superhost flags.
-- `listings`: property details, owner, location, capacity, and prices.
-- `listing_images`: ordered image URLs for each listing.
-- `amenities`: reusable amenity names and icon identifiers.
-- `listing_amenities`: many-to-many listing/amenity join table.
-- `bookings`: guest reservations, dates, status, and price snapshot fields.
-- `reviews`: listing reviews tied to an author and a unique booking.
-- `wishlists`: saved user/listing pairs with a composite primary key.
+### `users`
 
-### Relationships
+Stores the demo users used by the mocked authentication system.
 
-- One user can host many listings and make many bookings, reviews, and wishlist entries.
-- A listing belongs to one host and has many images, bookings, reviews, and wishlist entries.
-- Listings and amenities are many-to-many through `listing_amenities`.
-- A review belongs to one listing, author, and booking.
-- A booking stores `nightly_price`, `nights`, `cleaning_fee`, `service_fee`, and `total_price` so a later listing price change does not rewrite a historical receipt.
-- The composite `wishlists(user_id, listing_id)` primary key prevents duplicate saves.
+A user can participate as a guest and can also have host privileges.
 
-## Database Design Decisions
+### `listings`
 
-- `is_host` allows the same user model to represent guests and hosts in the mock system.
-- Images are separate rows because listings contain ordered photos and galleries.
-- Amenities are shared through a many-to-many relation.
-- Bookings retain authoritative price snapshots.
-- Wishlist uniqueness is enforced by the database key and service-level idempotency.
-- Reviews are tied to a booking, so each booking can have at most one review.
+Stores property information including:
 
-## Booking Availability Algorithm
+- host
+- title
+- description
+- property type
+- category
+- location
+- coordinates
+- nightly price
+- cleaning fee
+- maximum guests
+- bedrooms
+- beds
+- bathrooms
 
-The backend treats checkout as exclusive. A requested range overlaps a confirmed booking when:
+### `listing_images`
+
+Stores ordered image URLs belonging to listings.
+
+Keeping images in a separate table allows a listing to have multiple ordered photographs.
+
+### `amenities`
+
+Stores the reusable amenity catalogue.
+
+### `listing_amenities`
+
+Association table implementing the many-to-many relationship between listings and amenities.
+
+### `bookings`
+
+Stores reservation information including:
+
+- listing
+- guest
+- check-in
+- check-out
+- guest count
+- booking status
+- nightly-price snapshot
+- number of nights
+- cleaning fee
+- service fee
+- total price
+
+### `reviews`
+
+Stores listing reviews linked to an author and booking.
+
+### `wishlists`
+
+Stores saved user/listing relationships.
+
+The user/listing combination is unique, preventing the same listing from being saved multiple times by the same user.
+
+---
+
+## Database Relationships
+
+```text
+User
+ ├── hosts ───────────> Listings
+ ├── books ───────────> Bookings
+ ├── writes ──────────> Reviews
+ └── saves ───────────> Wishlists
+
+Listing
+ ├── Images
+ ├── Amenities
+ ├── Bookings
+ ├── Reviews
+ └── Wishlists
+```
+
+### Design Decisions
+
+**One user model**
+
+The same user model can participate in guest and host workflows instead of maintaining separate guest and host tables.
+
+**Separate listing images**
+
+A listing can contain multiple ordered photographs.
+
+**Many-to-many amenities**
+
+Amenities are reusable across multiple listings and can be queried for filtering.
+
+**Booking price snapshots**
+
+Confirmed bookings retain their original pricing even if a host later changes the listing's current price.
+
+**Wishlist uniqueness**
+
+Database constraints prevent duplicate saved-listing relationships.
+
+---
+
+## Booking Availability
+
+Booking availability is validated by the backend.
+
+A requested booking overlaps an existing confirmed booking when:
 
 ```text
 requested_check_in < existing_check_out
-AND requested_check_out > existing_check_in
+AND
+requested_check_out > existing_check_in
 ```
 
-For example, an existing booking from `5 June` through `10 June` blocks overlapping requests but allows a new stay beginning on `10 June`. Only bookings with status `confirmed` block dates; cancelled bookings do not.
+Checkout is treated as exclusive.
 
-## Pricing
+For example:
 
-Quotes are calculated by the backend using:
+```text
+Existing booking:
+5 June → 10 June
+
+Valid next booking:
+10 June → 14 June
+```
+
+This allows same-day turnover between guests.
+
+Only confirmed bookings block availability. Cancelled bookings do not.
+
+---
+
+## Server-Side Pricing
+
+The backend calculates booking prices.
+
+The calculation follows the application's pricing rules:
 
 ```text
 nights = check_out - check_in
-subtotal = nightly_price * nights
-service_fee = subtotal * 0.12
+
+subtotal = nightly_price × nights
+
+service_fee = subtotal × 0.12
+
 total = subtotal + cleaning_fee + service_fee
 ```
 
-The frontend displays the quote but does not provide an authoritative total when creating a booking. The booking service recalculates the quote from the database listing and stores the resulting price snapshot on the booking.
+The frontend displays the server-generated quote.
+
+It does not provide the authoritative booking total.
+
+When a booking is created, the backend recalculates the price using the listing stored in the database.
+
+### Price Snapshots
+
+Bookings store:
+
+```text
+nightly_price
+nights
+cleaning_fee
+service_fee
+total_price
+```
+
+This means an existing booking does not change if the host later updates the listing's nightly price.
+
+---
 
 ## Mock Authentication
 
-The seeded user list is exposed through `/api/users`. The frontend selects a demo user and stores its ID in `localStorage` under `selectedUserId`. The centralized API client sends that value as:
+Real authentication is intentionally outside the scope of this assignment.
 
-```text
+The application uses seeded demo users.
+
+The frontend stores the currently selected demo user's ID in browser storage and the centralized API client sends it to the backend using:
+
+```http
 X-User-Id: <selected-user-id>
 ```
 
-The backend resolves that seeded user through the existing dependency. Host routes check `is_host` and verify listing ownership before edits or deletes.
+The backend resolves the corresponding seeded user.
 
-This mechanism is intentionally mocked for assignment/demo purposes. It is not production authentication and has no passwords, OAuth, JWTs, or security guarantees.
+Host endpoints still perform role and ownership checks before allowing listing modifications.
 
-## Search
+This system is intended only for demonstration purposes and is not production authentication.
 
-`GET /api/listings` supports these query parameters:
+A production application would replace it with server-verified authentication such as sessions, OAuth, or token-based authentication.
 
-- `location`: city, country, or title search
-- `check_in`, `check_out`: ISO dates used for availability filtering
-- `guests`: minimum guest capacity
-- `min_price`, `max_price`: nightly price range
+---
+
+## Search & Filtering
+
+`GET /api/listings` supports search/filter parameters including:
+
+- `location`
+- `check_in`
+- `check_out`
+- `guests`
+- `min_price`
+- `max_price`
 - `property_type`
 - `category`
-- `amenities`: repeat the parameter for multiple amenities; all selected amenities must match
-- `bedrooms`, `beds`: minimum room/bed counts
-- `page`, `page_size`: pagination controls
+- `amenities`
+- `bedrooms`
+- `beds`
+- `page`
+- `page_size`
 
-The frontend preserves these values in the URL so refresh and browser navigation retain search state.
+Search state is represented through URL query parameters so searches can survive refreshes and browser navigation.
+
+When dates are supplied, listings with conflicting confirmed bookings are excluded.
+
+---
 
 ## API Overview
 
-All API routes below are prefixed with `/api`.
+All endpoints below are prefixed with:
 
-### Health and Metadata
+```text
+/api
+```
+
+### Health & Metadata
 
 | Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/health` | Health status |
-| GET | `/meta/categories` | Listing category counts |
-| GET | `/meta/amenities` | Available amenities |
+|---|---|---|
+| GET | `/health` | API health status |
+| GET | `/meta/categories` | Get listing categories |
+| GET | `/meta/amenities` | Get available amenities |
 
 ### Listings
 
 | Method | Path | Purpose |
-| --- | --- | --- |
+|---|---|---|
 | GET | `/listings` | Search, filter, and paginate listings |
-| GET | `/listings/{listing_id}` | Listing detail |
-| GET | `/listings/{listing_id}/unavailable-dates` | Confirmed unavailable ranges |
-| GET | `/listings/{listing_id}/quote` | Server-side price quote |
+| GET | `/listings/{listing_id}` | Get listing details |
+| GET | `/listings/{listing_id}/unavailable-dates` | Get unavailable booking ranges |
+| GET | `/listings/{listing_id}/quote` | Get server-side booking quote |
 
 ### Bookings
 
 | Method | Path | Purpose |
-| --- | --- | --- |
-| POST | `/bookings` | Create a booking for the current mock user |
-| GET | `/bookings/me` | Current user’s bookings |
-| GET | `/bookings/host` | Reservations for the current host’s listings |
-| POST | `/bookings/{booking_id}/cancel` | Cancel an owned guest booking |
+|---|---|---|
+| POST | `/bookings` | Create a booking |
+| GET | `/bookings/me` | Get current user's bookings |
+| GET | `/bookings/host` | Get reservations for current host |
+| POST | `/bookings/{booking_id}/cancel` | Cancel an owned booking |
 
 ### Wishlist
 
 | Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/wishlist` | Current user’s saved listings |
-| GET | `/wishlist/ids` | Current user’s saved listing IDs |
+|---|---|---|
+| GET | `/wishlist` | Get saved listings |
+| GET | `/wishlist/ids` | Get saved listing IDs |
 | POST | `/wishlist/{listing_id}` | Save a listing |
 | DELETE | `/wishlist/{listing_id}` | Remove a saved listing |
 
 ### Host Listings
 
 | Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/host/listings` | List listings owned by the current host |
-| POST | `/host/listings` | Create a listing for the current host |
+|---|---|---|
+| GET | `/host/listings` | Get current host's listings |
+| POST | `/host/listings` | Create a listing |
 | PUT | `/host/listings/{listing_id}` | Update an owned listing |
-| DELETE | `/host/listings/{listing_id}` | Delete an owned listing when it has no booking history |
+| DELETE | `/host/listings/{listing_id}` | Delete an eligible owned listing |
 
 ### Users
 
 | Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/users` | List seeded demo users |
-| GET | `/users/me` | Resolve the current mock user |
+|---|---|---|
+| GET | `/users` | Get seeded demo users |
+| GET | `/users/me` | Resolve current mock user |
 
-There is no review creation endpoint. Reviews are seeded sample data.
+Reviews currently use seeded sample data. Review creation is not implemented.
 
-FastAPI Swagger UI is available at `/docs` when the backend is running.
+---
 
 ## Local Development
 
 ### Prerequisites
 
-- Node.js and npm compatible with the installed Next.js 16 project
-- Python 3 with virtual-environment support
+Install:
 
-Exact package versions are declared in `frontend/package.json` and `backend/requirements.txt`.
+- Git
+- Node.js and npm
+- Python 3
+
+Dependency versions are defined in:
+
+```text
+frontend/package.json
+backend/requirements.txt
+```
+
+---
 
 ### Clone
-
-The current configured remote is:
 
 ```bash
 git clone https://github.com/priyanshisinghi/Airbnb_clone.git
 cd Airbnb_clone
 ```
 
-### Backend Setup
+---
 
-Windows PowerShell:
+### Backend Setup — Windows PowerShell
 
 ```powershell
 cd backend
+
 python -m venv venv
+
 .\venv\Scripts\Activate.ps1
+
 pip install -r requirements.txt
+
 uvicorn app.main:app --reload --port 8000
 ```
 
-Linux/macOS:
+Backend:
+
+```text
+http://localhost:8000
+```
+
+Health check:
+
+```text
+http://localhost:8000/api/health
+```
+
+Swagger documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+### Backend Setup — Linux/macOS
 
 ```bash
 cd backend
+
 python3 -m venv venv
+
 source venv/bin/activate
+
 pip install -r requirements.txt
+
 uvicorn app.main:app --reload --port 8000
 ```
 
+---
+
 ### Frontend Setup
 
-In a second terminal:
+Open another terminal:
 
 ```bash
 cd frontend
 npm install
 ```
 
-Create `frontend/.env.local` from `frontend/.env.local.example`, then run:
+Create:
+
+```text
+frontend/.env.local
+```
+
+with:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Start the frontend:
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
 
 ## Environment Variables
 
 ### Backend
 
-The backend reads `.env` from the `backend` working directory:
+Create:
 
-```dotenv
+```text
+backend/.env
+```
+
+Example:
+
+```env
 PROJECT_NAME="Airbnb Clone API"
 API_V1_STR="/api"
 DATABASE_URL="sqlite:///./airbnb.db"
 CORS_ORIGINS=["http://localhost:3000","http://127.0.0.1:3000"]
 ```
 
-`DATABASE_URL` can be supplied through the existing settings layer. SQLite uses `check_same_thread=False`; no migration system is configured.
+No private API keys are required by the project.
 
 ### Frontend
 
-`frontend/.env.local`:
+Create:
 
-```dotenv
+```text
+frontend/.env.local
+```
+
+Example:
+
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-The centralized client uses this value and falls back to `http://localhost:8000` when it is not set.
+---
 
-No credentials, tokens, or private API keys are required by this assignment.
+## Seed Data
 
-## Database
+When the SQLite database is empty, application startup creates the database tables and runs the seed process.
 
-The default SQLite file is `backend/airbnb.db`. On backend import/startup, SQLAlchemy creates missing tables and `seed_db` inserts sample data only when the database has no users. A populated database is not reseeded automatically.
+The seed provides demonstration data including:
 
-To reset local data, stop the backend and delete the database file. This permanently deletes local bookings, wishlist entries, and other SQLite data:
+- users
+- listings
+- listing images
+- amenities
+- bookings
+- reviews
+- wishlist data
+
+A populated database is not automatically reseeded.
+
+---
+
+## Demo Users
+
+Examples of seeded users include:
+
+### Guest
+
+```text
+Demo Guest
+demo.guest@example.com
+```
+
+### Hosts
+
+```text
+Aarav Sharma
+aarav.sharma@example.com
+```
+
+```text
+Rohan Mehta
+rohan.mehta@example.com
+```
+
+There are no passwords because authentication is mocked.
+
+---
+
+## Reset Local Database
+
+Stop the backend first.
+
+From the repository root on Windows PowerShell:
 
 ```powershell
 Remove-Item backend\airbnb.db
 ```
 
-Start the backend again to recreate and seed the database. The seed uses stable Unsplash URLs and ordered image positions.
+Start the backend again.
 
-## Demo Users
+The application recreates the schema and seeds a new demonstration database.
 
-The seed creates six hosts and four guests. Useful examples:
+> Resetting the database deletes local bookings, wishlist changes, and other locally created data.
 
-- Guest: `Demo Guest` (`demo.guest@example.com`)
-- Host: `Aarav Sharma` (`aarav.sharma@example.com`)
-- Host: `Rohan Mehta` (`rohan.mehta@example.com`)
+---
 
-There are no passwords because authentication is mocked.
+## Testing & QA
 
-## Testing / QA
-
-The frontend package currently defines these scripts:
+Frontend production build:
 
 ```bash
 cd frontend
 npm run build
+```
+
+TypeScript check:
+
+```bash
 npx tsc --noEmit --incremental false
 ```
 
-There is no `lint` script and no repository test suite currently configured. Backend startup/import validation can be run with:
+Backend startup/import validation can be performed locally using the configured Python environment.
 
-```powershell
-cd backend
-.\venv\Scripts\python.exe -c "from app.main import app; print(len(app.openapi()['paths']))"
-```
+The repository does not currently contain an automated test suite.
+
+---
 
 ## Responsive Design
 
-The application includes responsive layouts and was checked at:
+The application includes responsive layouts designed for mobile, tablet, and desktop views.
+
+The UI has been checked at representative widths including:
 
 - `375px`
 - `430px`
@@ -400,62 +774,154 @@ The application includes responsive layouts and was checked at:
 - `1024px`
 - `1440px`
 
+---
+
 ## Assumptions
 
-- The assignment runs one local backend and one local frontend.
-- Demo identity is selected in the browser and is not a security boundary.
-- SQLite is sufficient for local/demo usage.
-- Images are remote stable Unsplash URLs rather than uploaded assets.
-- Seed data is sample data and should not be treated as production content.
+- This is an assignment/demo application rather than a production accommodation platform.
+- Authentication is intentionally mocked.
+- Payments are intentionally mocked.
+- SQLite is used because it is the database required by the assignment.
+- Listing images are provided through remote image URLs.
+- Experiences and Services are placeholder experiences rather than complete marketplaces.
+- Messaging and identity verification are placeholders.
+- Seed data is demonstration content.
+
+---
 
 ## Known Limitations
 
-- Authentication is mocked with a client-selected user ID.
+- Authentication uses mock demo identities.
 - Payments are mocked.
-- Messaging is a placeholder.
-- The map is static/basic.
+- Messaging is not implemented beyond its placeholder UI.
+- The map is basic/static.
 - Identity verification is a placeholder.
-- Reviews are seeded; there is no review submission API.
-- SQLite requires persistent filesystem storage in any deployment or bookings/listings will be lost on replacement.
-- No automated frontend or backend test suite is configured.
+- Reviews are seeded and cannot currently be submitted by users.
+- Experiences and Services are not complete booking marketplaces.
+- The backend runs on Render's free tier and may require additional startup time after inactivity.
+- The deployed SQLite database is stored on Render's ephemeral filesystem. User-created data is not guaranteed to survive a filesystem replacement or redeployment.
+- There is currently no automated frontend/backend test suite.
+
+---
 
 ## Future Improvements
 
-- Real authentication and authorization tokens
-- Production payment provider
-- Production database and migrations
-- Object storage for listing media
+- Production authentication
+- Real payment processing
+- Persistent production database/storage
+- Database migrations
+- Cloud image storage
 - Interactive maps
 - Real-time messaging
-- Review creation and moderation
-- Automated unit, integration, and end-to-end tests
+- Review creation
+- Automated testing
 
-## Deployment
+---
 
-### Frontend deployment
+# Deployment
 
-Build the Next.js application with:
+The application is deployed using Vercel and Render.
 
-```bash
-cd frontend
-npm run build
+## Production Architecture
+
+```text
+Browser
+   |
+   v
+Vercel
+Next.js Frontend
+   |
+   | HTTPS REST API
+   v
+Render
+FastAPI Backend
+   |
+   v
+SQLAlchemy
+   |
+   v
+SQLite
 ```
 
-Set `NEXT_PUBLIC_API_URL` to the deployed backend URL before building. No frontend deployment has been performed for this repository.
+---
 
-### Backend deployment
+## Frontend — Vercel
 
-Run the ASGI application with the existing module path:
+**Live application:**  
+https://airbnb-clone-five-vert.vercel.app
 
-```bash
-cd backend
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+Configuration:
+
+```text
+Platform: Vercel
+Root Directory: frontend
+Framework: Next.js
 ```
 
-Set `DATABASE_URL` and `CORS_ORIGINS` for the deployment environment. The configured CORS list must include the actual frontend origin.
+Production environment variable:
 
-### SQLite persistence warning
+```env
+NEXT_PUBLIC_API_URL=https://airbnb-clone-5f2h.onrender.com
+```
 
-SQLite stores all application state in one local file. A deployment must attach persistent filesystem/storage to preserve listings, bookings, reviews, and wishlists across restarts or redeployments. The application does not automatically migrate SQLite data to another database or provide a backup process.
+---
 
-No deployment URL or production infrastructure is currently configured.
+## Backend — Render
+
+**Backend API:**  
+https://airbnb-clone-5f2h.onrender.com
+
+Configuration:
+
+```text
+Platform: Render
+Root Directory: backend
+Build Command: pip install -r requirements.txt
+Start Command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+Production database configuration:
+
+```env
+DATABASE_URL=sqlite:///./airbnb.db
+```
+
+The production CORS configuration includes the deployed Vercel frontend origin.
+
+Health endpoint:
+
+```text
+GET /api/health
+```
+
+---
+
+## Render Free-Tier Note
+
+The backend currently runs on Render's free tier.
+
+After a period of inactivity, the service may spin down. The first request after inactivity can therefore take additional time while the service starts.
+
+---
+
+## SQLite Deployment Limitation
+
+SQLite is used because it is required by the assignment.
+
+The current Render free-tier deployment uses ephemeral filesystem storage.
+
+While the current database file exists, bookings, wishlist changes, and host listing changes are stored normally.
+
+However, user-created data is not guaranteed to survive a Render filesystem replacement or redeployment.
+
+When a fresh empty database is created, the application recreates its tables and restores the demonstration seed data.
+
+A production version would use persistent storage while retaining the same relational data model.
+
+---
+
+## Disclaimer
+
+Staywell is an educational Airbnb-inspired project created for a full-stack software development assignment.
+
+It is not affiliated with or operated by Airbnb.
