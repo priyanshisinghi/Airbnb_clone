@@ -1,11 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.core.database import engine, Base
-from app.routers import health
+from app.core.database import SessionLocal, engine, Base
+import app.models  # Register models with SQLAlchemy Base
+from app.routers import health, listings, meta, bookings, wishlist
+from app.seed.seed import seed_db
 
 # Create database tables if any exist
 Base.metadata.create_all(bind=engine)
+
+# Seed database on startup if empty
+db = SessionLocal()
+try:
+    seed_db(db)
+finally:
+    db.close()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -24,6 +33,10 @@ if settings.CORS_ORIGINS:
 
 # Include Routers
 app.include_router(health.router, prefix=settings.API_V1_STR)
+app.include_router(listings.router, prefix=settings.API_V1_STR)
+app.include_router(meta.router, prefix=settings.API_V1_STR)
+app.include_router(bookings.router, prefix=settings.API_V1_STR)
+app.include_router(wishlist.router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def root():
