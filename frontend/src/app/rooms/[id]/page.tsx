@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import HeartButton from "@/components/HeartButton";
 import { fetchListingById, fetchUnavailableDates, fetchPriceQuote } from "@/lib/api";
 import { ListingDetail, UnavailableDateRange, QuoteResponse } from "@/types/listing";
+import DateRangePicker, { formatShortRange } from "@/components/booking/DateRangePicker";
 
 interface RoomPageProps {
   params: Promise<{ id: string }>;
@@ -32,6 +33,7 @@ export default function RoomPage({ params }: RoomPageProps) {
   const [quote, setQuote] = useState<QuoteResponse | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
@@ -157,13 +159,13 @@ export default function RoomPage({ params }: RoomPageProps) {
     : [{ id: 0, url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80", position: 0 }];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
+    <div className="min-h-screen overflow-x-hidden bg-white text-gray-900 flex flex-col pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Navbar />
 
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1">
         {/* Header Title Section */}
         <div className="mb-3">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-2">
             {listing.title}
           </h1>
 
@@ -173,8 +175,8 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 text-sm font-semibold text-gray-900">
-            <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4 text-sm font-semibold text-gray-900">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               {listing.rating ? (
                 <>
                   <div className="flex items-center space-x-1">
@@ -208,11 +210,11 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
 
             {/* Share and Wishlist Buttons */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1 sm:space-x-4">
               <button
                 onClick={handleShare}
                 type="button"
-                className="flex items-center space-x-1.5 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition underline cursor-pointer text-xs sm:text-sm font-semibold text-gray-800"
+                className="flex items-center space-x-1.5 hover:bg-gray-100 px-2 sm:px-3 py-1.5 rounded-lg transition underline cursor-pointer text-xs sm:text-sm font-semibold text-gray-800"
               >
                 <svg className="w-4 h-4 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -220,7 +222,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                 <span>{copied ? "Link Copied!" : "Share"}</span>
               </button>
 
-              <div className="flex items-center space-x-1 cursor-pointer hover:bg-gray-100 px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold underline">
+              <div className="flex items-center space-x-1 cursor-pointer hover:bg-gray-100 px-2 sm:px-3 py-1.5 rounded-lg transition text-xs sm:text-sm font-semibold underline">
                 <HeartButton listingId={listing.id} />
                 <span>Save</span>
               </div>
@@ -229,8 +231,8 @@ export default function RoomPage({ params }: RoomPageProps) {
         </div>
 
         {/* Photo Gallery Grid */}
-        <div className="relative rounded-3xl overflow-hidden mb-10 group">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 aspect-[16/9] max-h-[500px]">
+        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl mb-6 md:mb-10 group">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 aspect-[4/3] sm:aspect-[16/9] max-h-[280px] sm:max-h-[500px]">
             {/* Primary Image (Spans 2 columns & 2 rows on desktop) */}
             <div className="md:col-span-2 relative h-full bg-gray-100 cursor-pointer" onClick={() => setGalleryOpen(true)}>
               <img
@@ -258,7 +260,7 @@ export default function RoomPage({ params }: RoomPageProps) {
           <button
             onClick={() => setGalleryOpen(true)}
             type="button"
-            className="absolute bottom-4 right-4 bg-white hover:bg-gray-50 border border-gray-900 px-4 py-2 rounded-xl text-xs font-semibold text-gray-900 shadow-md flex items-center space-x-2 transition cursor-pointer active:scale-95 z-10"
+            className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white hover:bg-gray-50 border border-gray-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold text-gray-900 shadow-md flex items-center space-x-2 transition cursor-pointer active:scale-95 z-10"
           >
             <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
               <path d="M2 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3zm0 7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3zm7-7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V3zm0 7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-3z"/>
@@ -268,14 +270,14 @@ export default function RoomPage({ params }: RoomPageProps) {
         </div>
 
         {/* Main Details Grid: Left 2/3 Content, Right 1/3 Sticky Booking Card */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-12 pb-28 lg:pb-0">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-12">
           {/* Left Column Content */}
           <div className="lg:col-span-2 divide-y divide-gray-200">
             {/* Overview & Host Info */}
             <div className="pb-6 md:pb-8">
               <div className="flex items-center justify-between gap-3 pb-4 md:pb-6">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                <div className="min-w-0">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900">
                     {listing.property_type} hosted by {listing.host.name}
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
@@ -286,13 +288,13 @@ export default function RoomPage({ params }: RoomPageProps) {
                   <img
                     src={listing.host.avatar_url}
                     alt={listing.host.name}
-                    className="w-14 h-14 rounded-full object-cover border border-gray-200 shrink-0"
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border border-gray-200 shrink-0"
                   />
                 )}
               </div>
 
               {/* Highlights */}
-              <div className="space-y-3 pt-2 md:space-y-4 md:pt-4">
+              <div className="space-y-3 pt-1 md:space-y-4 md:pt-4">
                 {listing.host.is_superhost && (
                     <div className="flex items-start gap-3 md:gap-4">
                     <svg className="w-6 h-6 text-gray-800 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,7 +330,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
             {/* Description */}
             <div className="py-6 md:py-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">About this space</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3 md:mb-4">About this space</h3>
               <p className="text-sm leading-6 text-gray-700 whitespace-pre-line">
                 {descriptionExpanded || listing.description.length <= 280 ? listing.description : `${listing.description.slice(0, 280).trim()}...`}
               </p>
@@ -341,10 +343,10 @@ export default function RoomPage({ params }: RoomPageProps) {
 
             {/* Where you'll sleep */}
             <div className="py-6 md:py-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Where you'll sleep</h3>
-              <div className="flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible">
+              <h3 className="text-lg font-bold text-gray-900 mb-3 md:mb-4">Where you'll sleep</h3>
+              <div className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none">
                 {Array.from({ length: listing.bedrooms }).map((_, idx) => (
-                  <div key={idx} className="min-w-[210px] rounded-2xl border border-gray-200 bg-gray-50/50 p-4 md:min-w-0 md:p-6">
+                  <div key={idx} className="min-w-[168px] max-w-[168px] snap-start rounded-2xl border border-gray-200 bg-gray-50/50 p-3 sm:max-w-none sm:min-w-0 md:p-6">
                     <svg className="w-6 h-6 text-gray-800 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 12V8H4v4M3 20h18M4 12v8m16-8v8" />
                     </svg>
@@ -357,8 +359,8 @@ export default function RoomPage({ params }: RoomPageProps) {
 
             {/* Amenities Section */}
             <div className="py-6 md:py-8">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">What this place offers</h3>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
+              <h3 className="text-lg font-bold text-gray-900 mb-3 md:mb-4">What this place offers</h3>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:gap-4">
                 {(showAllAmenities ? listing.amenities : listing.amenities.slice(0, 6)).map((amenity) => (
                   <div key={amenity.id} className="flex items-center space-x-3 text-sm text-gray-800">
                     <svg className="w-5 h-5 text-gray-600 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
@@ -377,7 +379,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
             {/* Reviews Section */}
             <div className="py-6 md:py-8">
-              <div className="flex items-center space-x-2 mb-6">
+              <div className="flex items-center space-x-2 mb-3 md:mb-6">
                 <svg className="w-5 h-5 fill-current text-gray-900" viewBox="0 0 32 32">
                   <path d="M16 2l4.55 9.22 10.17 1.48-7.36 7.17 1.74 10.13L16 25.23l-9.1 4.77 1.74-10.13-7.36-7.17 10.17-1.48z" />
                 </svg>
@@ -418,9 +420,9 @@ export default function RoomPage({ params }: RoomPageProps) {
             {/* Static Map Section */}
             <div className="py-6 md:py-8">
               <h3 className="text-lg font-bold text-gray-900 mb-2">Where you'll be</h3>
-              <p className="text-sm text-gray-600 mb-4">{listing.city}, {listing.country}</p>
+              <p className="text-sm text-gray-600 mb-3 md:mb-4">{listing.city}, {listing.country}</p>
 
-              <div className="relative flex h-64 w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-gray-200 bg-slate-100 p-5 text-center md:h-72 md:p-6">
+              <div className="relative flex h-56 w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-slate-100 p-5 text-center md:h-72 md:rounded-3xl md:p-6">
                 <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg mb-2">
                   <svg className="w-6 h-6 stroke-current stroke-2" fill="none" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -438,7 +440,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
           {/* Right Column Sticky Booking Card (Desktop) */}
           <div className="hidden lg:block relative">
-            <div className="sticky top-28 border border-gray-200 shadow-xl rounded-3xl p-6 bg-white space-y-6">
+            <div className="sticky top-28 overflow-visible border border-gray-200 shadow-xl rounded-3xl p-6 bg-white space-y-6">
               {/* Header Pricing */}
               <div className="flex justify-between items-baseline">
                 <div>
@@ -456,26 +458,18 @@ export default function RoomPage({ params }: RoomPageProps) {
 
               {/* Interactive Dates / Guests Input Box */}
               <div className="border border-gray-300 rounded-2xl overflow-hidden divide-y divide-gray-300 text-xs">
-                <div className="grid grid-cols-2 divide-x divide-gray-300 bg-white">
-                  <div className="p-3">
-                    <label className="block text-[10px] font-bold text-gray-800 uppercase">Check-in</label>
-                    <input
-                      type="date"
-                      value={checkIn}
-                      onChange={(e) => setCheckIn(e.target.value)}
-                      className="w-full bg-transparent text-xs font-medium text-gray-900 focus:outline-none mt-0.5"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <label className="block text-[10px] font-bold text-gray-800 uppercase">Checkout</label>
-                    <input
-                      type="date"
-                      value={checkOut}
-                      onChange={(e) => setCheckOut(e.target.value)}
-                      className="w-full bg-transparent text-xs font-medium text-gray-900 focus:outline-none mt-0.5"
-                    />
-                  </div>
-                </div>
+                <DateRangePicker
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  onDatesChange={(nextCheckIn, nextCheckOut) => {
+                    setCheckIn(nextCheckIn);
+                    setCheckOut(nextCheckOut);
+                  }}
+                  unavailableDates={unavailableDates}
+                  open={calendarOpen}
+                  onOpenChange={setCalendarOpen}
+                  activeWhen="desktop"
+                />
 
                 <div className="p-3 bg-white">
                   <label className="block text-[10px] font-bold text-gray-800 uppercase">Guests</label>
@@ -504,7 +498,7 @@ export default function RoomPage({ params }: RoomPageProps) {
               <button
                 type="button"
                 onClick={handleReserve}
-                disabled={Boolean(quoteError) || !checkIn || !checkOut}
+                disabled={Boolean(quoteError) || !checkIn || !checkOut || quoteLoading}
                 className="w-full bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-base py-3.5 rounded-xl transition shadow-md cursor-pointer active:scale-98"
               >
                 {quoteLoading ? "Checking backend..." : "Reserve"}
@@ -542,23 +536,71 @@ export default function RoomPage({ params }: RoomPageProps) {
         </div>
       </main>
 
+      {/* Mobile calendar host — always mounted below lg so the shared picker can open */}
+      <div className="lg:hidden">
+        <DateRangePicker
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onDatesChange={(nextCheckIn, nextCheckOut) => {
+            setCheckIn(nextCheckIn);
+            setCheckOut(nextCheckOut);
+          }}
+          unavailableDates={unavailableDates}
+          open={calendarOpen}
+          onOpenChange={setCalendarOpen}
+          guestCount={guestCount}
+          onGuestCountChange={setGuestCount}
+          maxGuests={listing.max_guests}
+          showTrigger={false}
+          activeWhen="mobile"
+        />
+      </div>
+
       {/* Mobile Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl lg:hidden">
-        <div>
-          <span className="text-lg font-bold text-gray-900">{formatCurrency(quote?.total || listing.price_per_night)}</span>
-          <span className="text-xs font-normal text-gray-500">{quote ? " total" : " / night"}</span>
-          <div className="text-xs text-gray-600">
-            {quote ? `${quote.nights} ${quote.nights === 1 ? "night" : "nights"} · ${checkIn} - ${checkOut}` : "Add dates"}
-          </div>
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl lg:hidden">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setCalendarOpen(true)}
+            className="min-w-0 flex-1 text-left"
+            aria-label={checkIn && checkOut ? "Change selected dates" : "Add dates"}
+          >
+            <div>
+              <span className="text-lg font-bold text-gray-900">
+                {formatCurrency(quote?.total || listing.price_per_night)}
+              </span>
+              <span className="text-xs font-normal text-gray-500">{quote ? " total" : " / night"}</span>
+            </div>
+            <span className="block text-xs text-gray-600 underline underline-offset-2">
+              {quote
+                ? `${quote.nights} ${quote.nights === 1 ? "night" : "nights"} · ${formatShortRange(checkIn, checkOut)}`
+                : checkIn && checkOut
+                  ? formatShortRange(checkIn, checkOut)
+                  : "Add dates"}
+            </span>
+            {quoteError && (
+              <span className="mt-1 block text-[11px] font-medium text-rose-600 line-clamp-2">{quoteError}</span>
+            )}
+          </button>
+          {checkIn && checkOut ? (
+            <button
+              type="button"
+              onClick={handleReserve}
+              disabled={Boolean(quoteError) || quoteLoading || !quote}
+              className="shrink-0 rounded-xl bg-rose-500 px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-gray-300"
+            >
+              {quoteLoading ? "Checking..." : "Reserve"}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCalendarOpen(true)}
+              className="shrink-0 rounded-xl bg-rose-500 px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-rose-600"
+            >
+              Check availability
+            </button>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={handleReserve}
-          disabled={Boolean(quoteError) || !checkIn || !checkOut || quoteLoading}
-          className="rounded-xl bg-rose-500 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-gray-300"
-        >
-          {quoteLoading ? "Checking..." : "Reserve"}
-        </button>
       </div>
 
       {/* Fullscreen Photo Gallery Modal */}

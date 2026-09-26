@@ -116,3 +116,115 @@ button, a, input, textarea, select {
 @media (min-width: 768px) {
   body { padding-bottom: 0; }
 }
+
+.airbnb-daypicker.rdp-root {
+  --rdp-accent-color: #222222;
+  --rdp-accent-background-color: #f7f7f7;
+  --rdp-day-height: 42px;
+  --rdp-day-width: 42px;
+  --rdp-day_button-height: 40px;
+  --rdp-day_button-width: 40px;
+  --rdp-day_button-border-radius: 9999px;
+  --rdp-selected-border: 2px solid transparent;
+  --rdp-range_middle-background-color: #f7f7f7;
+  --rdp-range_middle-color: #222222;
+  --rdp-range_start-color: #ffffff;
+  --rdp-range_end-color: #ffffff;
+  --rdp-range_start-date-background-color: #222222;
+  --rdp-range_end-date-background-color: #222222;
+  --rdp-today-color: #222222;
+  --rdp-disabled-opacity: 0.45;
+  --rdp-months-gap: 1.75rem;
+  --rdp-nav_button-height: 2rem;
+  --rdp-nav_button-width: 2rem;
+  margin: 0 auto;
+  color: #222222;
+}
+
+.airbnb-daypicker .rdp-month_caption {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.airbnb-daypicker .rdp-weekday {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6b7280;
+  opacity: 1;
+  text-transform: uppercase;
+}
+
+.airbnb-daypicker .rdp-day_button {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.airbnb-daypicker .rdp-day_button:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.airbnb-daypicker .rdp-disabled:not(.rdp-selected) {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.airbnb-daypicker .rdp-selected .rdp-day_button {
+  border-color: transparent;
+}
+
+.airbnb-daypicker .rdp-button_previous,
+.airbnb-daypicker .rdp-button_next {
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+}
+
+.airbnb-daypicker .rdp-button_previous:hover,
+.airbnb-daypicker .rdp-button_next:hover {
+  background: #f9fafb;
+}
+
+.airbnb-daypicker .rdp-months {
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+@media (max-width: 1023px) {
+  .airbnb-daypicker.rdp-root {
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+    --rdp-months-gap: 0.5rem;
+    --rdp-nav_button-height: 1.75rem;
+    --rdp-nav_button-width: 1.75rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .airbnb-daypicker .rdp-months,
+  .airbnb-daypicker .rdp-month,
+  .airbnb-daypicker .rdp-month_grid {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .airbnb-daypicker .rdp-months {
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+
+  .airbnb-daypicker .rdp-weekday,
+  .airbnb-daypicker .rdp-day_button {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .airbnb-daypicker.rdp-root {
+    --rdp-day-height: 34px;
+    --rdp-day-width: 34px;
+    --rdp-day_button-height: 32px;
+    --rdp-day_button-width: 32px;
+  }
+}
