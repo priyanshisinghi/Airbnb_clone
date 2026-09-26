@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { DayPicker, type DateRange } from "react-day-picker";
 import { differenceInCalendarDays, format } from "date-fns";
@@ -97,7 +97,6 @@ export default function DateRangePicker({
   const triggerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const [mounted, setMounted] = useState(false);
 
   const today = useMemo(() => startOfLocalDay(), []);
@@ -134,38 +133,6 @@ export default function DateRangePicker({
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
-
-  const updatePanelPosition = useCallback(() => {
-    if (!isDesktop || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    const width = Math.min(760, window.innerWidth - 24);
-    const estimatedHeight = Math.min(620, window.innerHeight - 24);
-    let left = rect.right - width;
-    left = Math.min(Math.max(12, left), window.innerWidth - width - 12);
-    let top = rect.bottom + 10;
-    if (top + estimatedHeight > window.innerHeight - 12) {
-      top = Math.max(12, rect.top - estimatedHeight - 10);
-    }
-    setPanelStyle({
-      position: "fixed",
-      top,
-      left,
-      width,
-      maxHeight: "min(620px, calc(100vh - 24px))",
-    });
-  }, [isDesktop]);
-
-  useEffect(() => {
-    if (!open) return;
-    updatePanelPosition();
-    const onReposition = () => updatePanelPosition();
-    window.addEventListener("resize", onReposition);
-    window.addEventListener("scroll", onReposition, true);
-    return () => {
-      window.removeEventListener("resize", onReposition);
-      window.removeEventListener("scroll", onReposition, true);
-    };
-  }, [open, updatePanelPosition]);
 
   useEffect(() => {
     if (!open || !matchesViewport) return;
@@ -264,8 +231,7 @@ export default function DateRangePicker({
       role="dialog"
       aria-modal="true"
       aria-label="Date range calendar"
-      className="z-[80] overflow-auto rounded-[24px] border border-gray-200 bg-white p-5 shadow-[0_16px_48px_rgba(31,41,55,0.16)]"
-      style={panelStyle}
+      className="fixed left-1/2 top-1/2 z-[70] w-[850px] max-w-[calc(100vw-32px)] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[24px] border border-gray-200 bg-white p-5 shadow-[0_16px_48px_rgba(31,41,55,0.16)]"
     >
       <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -422,7 +388,7 @@ export default function DateRangePicker({
               <button
                 type="button"
                 aria-label="Dismiss calendar"
-                className="fixed inset-0 z-[70] bg-black/20"
+                className="fixed inset-0 z-[60] bg-black/30"
                 onClick={() => onOpenChange(false)}
               />
             )}
